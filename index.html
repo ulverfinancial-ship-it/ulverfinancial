@@ -65,7 +65,6 @@ nav{background:#1A3557;padding:0 60px;display:flex;align-items:center;justify-co
 .service-tab-icon svg{width:20px;height:20px;stroke:#1A3557;fill:none;stroke-width:1.8;transition:stroke .2s}
 .service-tab h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.1rem;font-weight:600;color:#1A3557;margin-bottom:8px}
 .service-tab p{font-size:0.84rem;line-height:1.65;color:#6B7280;font-weight:300}
-.service-tab-arrow{font-size:0.75rem;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:#4A9DC8;margin-top:16px;display:block}
 
 /* ── ABOUT STRIP ── */
 .about-strip{background:#EBF0F7;padding:64px 60px;display:flex;align-items:center;gap:64px;max-width:none}
@@ -145,6 +144,41 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
   footer{padding:48px 24px 24px}
   .footer-top{grid-template-columns:1fr 1fr}
 }
+
+/* ── CONSULTATION MODAL ── */
+.consult-overlay{position:fixed;inset:0;background:rgba(10,20,34,0.78);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;z-index:1000;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.consult-overlay.open{opacity:1;visibility:visible}
+.consult-modal{background:#fff;width:100%;max-width:560px;max-height:92vh;overflow-y:auto;position:relative;border-top:4px solid #4A9DC8;box-shadow:0 30px 80px rgba(0,0,0,0.4);transform:translateY(16px);transition:transform .25s}
+.consult-overlay.open .consult-modal{transform:translateY(0)}
+.consult-head{background:#122540;padding:32px 40px 28px}
+.consult-head .section-kicker{color:#4A9DC8;margin-bottom:10px}
+.consult-head h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.9rem;font-weight:700;color:#fff;line-height:1.15}
+.consult-head p{font-size:0.9rem;color:rgba(255,255,255,0.6);font-weight:300;margin-top:8px;line-height:1.6}
+.consult-close{position:absolute;top:18px;right:20px;width:34px;height:34px;background:rgba(255,255,255,0.1);border:none;color:#fff;font-size:1.5rem;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .2s}
+.consult-close:hover{background:#4A9DC8;color:#122540}
+.consult-body{padding:32px 40px 40px}
+.consult-field{margin-bottom:18px}
+.consult-row{display:flex;gap:16px}
+.consult-row .consult-field{flex:1}
+.consult-field label{display:block;font-size:0.7rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;color:#1A3557;margin-bottom:7px}
+.consult-field label .req{color:#4A9DC8}
+.consult-field input,.consult-field select,.consult-field textarea{width:100%;padding:12px 14px;border:1px solid #cdd6e3;font-family:'Nunito Sans',sans-serif;font-size:0.92rem;color:#1e2d3d;background:#fff;outline:none;transition:border-color .2s,box-shadow .2s}
+.consult-field input:focus,.consult-field select:focus,.consult-field textarea:focus{border-color:#4A9DC8;box-shadow:0 0 0 3px rgba(74,157,200,0.15)}
+.consult-field textarea{resize:vertical;min-height:90px}
+.consult-submit{width:100%;background:#4A9DC8;color:#122540;border:none;padding:15px;font-family:'Nunito Sans',sans-serif;font-size:0.82rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;cursor:pointer;transition:background .2s;margin-top:6px}
+.consult-submit:hover{background:#7BBFDC}
+.consult-note{font-size:0.76rem;color:#8a95a5;text-align:center;margin-top:14px;line-height:1.5}
+.consult-success{display:none;padding:56px 40px;text-align:center}
+.consult-success.show{display:block}
+.consult-success svg{width:56px;height:56px;stroke:#4A9DC8;fill:none;stroke-width:2;margin-bottom:20px}
+.consult-success h3{font-family:'Cormorant Garamond',Georgia,serif;font-size:1.7rem;color:#1A3557;margin-bottom:10px}
+.consult-success p{font-size:0.95rem;color:#6B7280;line-height:1.7;font-weight:300;max-width:360px;margin:0 auto}
+body.modal-open{overflow:hidden}
+@media(max-width:600px){
+  .consult-head{padding:26px 24px 22px}
+  .consult-body{padding:26px 24px 32px}
+  .consult-row{flex-direction:column;gap:0}
+}
 </style>
 </head>
 <body>
@@ -169,7 +203,7 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
     <li><a href="#about">About Us</a></li>
     <li><a href="#testimonials">Our Clients</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#contact" class="nav-cta">Schedule a Consultation</a></li>
+    <li><a href="#contact" class="nav-cta js-consult">Schedule a Consultation</a></li>
   </ul>
 </nav>
 
@@ -188,7 +222,7 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
     <div class="hero-rule"></div>
     <p class="hero-body">We are a full-service accounting and advisory firm serving small businesses and individuals in South Florida. From monthly bookkeeping to strategic financial planning, we are with you every step of the way.</p>
     <div class="hero-actions">
-      <a href="#contact" class="btn-gold">Schedule a Consultation</a>
+      <a href="#contact" class="btn-gold js-consult">Schedule a Consultation</a>
       <a href="#services" class="btn-outline-white">Our Services</a>
     </div>
   </div>
@@ -217,7 +251,6 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
       </div>
       <h3>Bookkeeping</h3>
       <p>Accurate monthly records, reconciliations, and financial statements you can count on.</p>
-      <span class="service-tab-arrow">Learn More →</span>
     </a>
     <a href="#" class="service-tab">
       <div class="service-tab-icon">
@@ -225,7 +258,6 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
       </div>
       <h3>Taxation</h3>
       <p>Strategic tax planning and preparation to minimize liability and keep you compliant.</p>
-      <span class="service-tab-arrow">Learn More →</span>
     </a>
     <a href="#" class="service-tab">
       <div class="service-tab-icon">
@@ -233,7 +265,6 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
       </div>
       <h3>Advisory</h3>
       <p>Fractional CFO and controller services for businesses ready to grow with confidence.</p>
-      <span class="service-tab-arrow">Learn More →</span>
     </a>
     <a href="#" class="service-tab">
       <div class="service-tab-icon">
@@ -241,7 +272,6 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
       </div>
       <h3>Consulting</h3>
       <p>Business planning, cash flow management, and financial strategy built around your goals.</p>
-      <span class="service-tab-arrow">Learn More →</span>
     </a>
   </div>
 </div>
@@ -374,6 +404,142 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
     <span class="footer-tagline">Lake Worth Beach, FL &nbsp;·&nbsp; Accountants &amp; Advisors</span>
   </div>
 </footer>
+
+
+<!-- CONSULTATION MODAL -->
+<div class="consult-overlay" id="consultModal" role="dialog" aria-modal="true" aria-labelledby="consultTitle" aria-hidden="true">
+  <div class="consult-modal">
+    <button class="consult-close" type="button" aria-label="Close" data-consult-close>&times;</button>
+    <div class="consult-head">
+      <div class="section-kicker">Book a Meeting</div>
+      <h3 id="consultTitle">Schedule a Consultation</h3>
+      <p>Tell us a little about your needs and we'll reach out within one business day to set up your free consultation.</p>
+    </div>
+    <div class="consult-body" id="consultFormWrap">
+      <form id="consultForm" novalidate>
+        <div class="consult-row">
+          <div class="consult-field">
+            <label for="cf-name">Full Name <span class="req">*</span></label>
+            <input type="text" id="cf-name" name="name" required autocomplete="name"/>
+          </div>
+          <div class="consult-field">
+            <label for="cf-business">Business Name</label>
+            <input type="text" id="cf-business" name="business" autocomplete="organization"/>
+          </div>
+        </div>
+        <div class="consult-row">
+          <div class="consult-field">
+            <label for="cf-email">Email <span class="req">*</span></label>
+            <input type="email" id="cf-email" name="email" required autocomplete="email"/>
+          </div>
+          <div class="consult-field">
+            <label for="cf-phone">Phone <span class="req">*</span></label>
+            <input type="tel" id="cf-phone" name="phone" required autocomplete="tel"/>
+          </div>
+        </div>
+        <div class="consult-row">
+          <div class="consult-field">
+            <label for="cf-service">Service of Interest</label>
+            <select id="cf-service" name="service">
+              <option value="">Select a service…</option>
+              <option>Bookkeeping</option>
+              <option>Taxation</option>
+              <option>Advisory</option>
+              <option>Consulting</option>
+              <option>Not sure yet</option>
+            </select>
+          </div>
+          <div class="consult-field">
+            <label for="cf-time">Preferred Time</label>
+            <select id="cf-time" name="preferred_time">
+              <option>Morning</option>
+              <option>Afternoon</option>
+              <option>Either</option>
+            </select>
+          </div>
+        </div>
+        <div class="consult-field">
+          <label for="cf-message">How can we help?</label>
+          <textarea id="cf-message" name="message" placeholder="A sentence or two about what you're looking for…"></textarea>
+        </div>
+        <button type="submit" class="consult-submit">Request My Consultation</button>
+        <p class="consult-note">We'll never share your information. Expect a reply within one business day.</p>
+      </form>
+    </div>
+    <div class="consult-success" id="consultSuccess">
+      <svg viewBox="0 0 24 24"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+      <h3>Thank you!</h3>
+      <p>Your consultation request has been received. Someone from Ulver Financial will be in touch within one business day.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  /* ─────────────────────────────────────────────────────────────
+     TO RECEIVE SUBMISSIONS BY EMAIL: paste your form endpoint URL
+     between the quotes below (e.g. from Formspree or Web3Forms).
+     Leave it empty ("") to keep demo mode, where the form shows the
+     thank-you message but does not send anything.
+     ───────────────────────────────────────────────────────────── */
+  var FORM_ENDPOINT = "";
+
+  var modal = document.getElementById('consultModal');
+  var form = document.getElementById('consultForm');
+  var wrap = document.getElementById('consultFormWrap');
+  var success = document.getElementById('consultSuccess');
+  var lastFocused = null;
+
+  function openModal(e){
+    if(e) e.preventDefault();
+    lastFocused = document.activeElement;
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden','false');
+    document.body.classList.add('modal-open');
+    var first = document.getElementById('cf-name');
+    if(first){ setTimeout(function(){ first.focus(); }, 60); }
+  }
+  function closeModal(){
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden','true');
+    document.body.classList.remove('modal-open');
+    if(lastFocused){ lastFocused.focus(); }
+  }
+
+  document.querySelectorAll('.js-consult').forEach(function(btn){
+    btn.addEventListener('click', openModal);
+  });
+  document.querySelectorAll('[data-consult-close]').forEach(function(btn){
+    btn.addEventListener('click', closeModal);
+  });
+  modal.addEventListener('click', function(e){ if(e.target === modal){ closeModal(); } });
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape' && modal.classList.contains('open')){ closeModal(); }
+  });
+
+  form.addEventListener('submit', function(e){
+    e.preventDefault();
+    if(!form.checkValidity()){ form.reportValidity(); return; }
+    if(FORM_ENDPOINT){
+      var btn = form.querySelector('.consult-submit');
+      btn.disabled = true; btn.textContent = 'Sending…';
+      fetch(FORM_ENDPOINT, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} })
+        .then(function(){ showSuccess(); })
+        .catch(function(){
+          btn.disabled = false; btn.textContent = 'Request My Consultation';
+          alert('Sorry, something went wrong. Please call us at (561) 318-0880.');
+        });
+    } else {
+      showSuccess(); /* demo mode */
+    }
+  });
+
+  function showSuccess(){
+    wrap.style.display = 'none';
+    success.classList.add('show');
+  }
+})();
+</script>
 
 </body>
 </html>
