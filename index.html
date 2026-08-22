@@ -482,7 +482,7 @@ body.modal-open{overflow:hidden}
      Leave it empty ("") to keep demo mode, where the form shows the
      thank-you message but does not send anything.
      ───────────────────────────────────────────────────────────── */
-  var FORM_ENDPOINT = "";
+  var FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbyu1aKyiQH-aMdIZA7BI5wxxRbI3N4WQoSntsc-j0-9yLHBjMFhusnBPYM6JvhVr2E/exec";
 
   var modal = document.getElementById('consultModal');
   var form = document.getElementById('consultForm');
@@ -523,7 +523,9 @@ body.modal-open{overflow:hidden}
     if(FORM_ENDPOINT){
       var btn = form.querySelector('.consult-submit');
       btn.disabled = true; btn.textContent = 'Sending…';
-      fetch(FORM_ENDPOINT, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} })
+      var payload = {};
+      new FormData(form).forEach(function(value, key){ payload[key] = value; });
+      fetch(FORM_ENDPOINT, { method:'POST', body:JSON.stringify(payload) })
         .then(function(){ showSuccess(); })
         .catch(function(){
           btn.disabled = false; btn.textContent = 'Request My Consultation';
