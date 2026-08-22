@@ -25,7 +25,8 @@ nav{background:#1A3557;padding:0 60px;display:flex;align-items:center;justify-co
 .nav-links>li{height:100%;display:flex;align-items:center;position:relative}
 .nav-links>li>a{color:rgba(255,255,255,0.85);text-decoration:none;font-size:0.78rem;font-weight:600;letter-spacing:0.14em;text-transform:uppercase;padding:0 18px;height:100%;display:flex;align-items:center;transition:color .2s,background .2s;white-space:nowrap}
 .nav-links>li>a:hover,.nav-links>li>a.active{color:#fff;background:rgba(200,151,42,0.15)}
-.nav-links>li>a.nav-cta{background:#4A9DC8;color:#122540;padding:0 24px;font-weight:700}
+.nav-links>li>a.nav-cta{background:#4A9DC8;color:#122540;padding:0 24px;font-weight:700;gap:8px}
+.nav-links>li>a.nav-cta svg{width:15px;height:15px;fill:none;stroke:#122540;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .nav-links>li>a.nav-cta:hover{background:#7BBFDC}
 
 /* ── HERO ── */
@@ -179,6 +180,18 @@ body.modal-open{overflow:hidden}
   .consult-body{padding:26px 24px 32px}
   .consult-row{flex-direction:column;gap:0}
 }
+/* ── CLIENT DOCUMENT UPLOAD CTA ── */
+.doc-cta{background:#4A9DC8;padding:60px}
+.doc-cta-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:44px;flex-wrap:wrap}
+.doc-cta-text{flex:1;min-width:280px}
+.doc-cta-kicker{font-size:0.7rem;font-weight:700;letter-spacing:0.22em;text-transform:uppercase;color:#122540;opacity:0.65;margin-bottom:12px}
+.doc-cta-h2{font-family:'Cormorant Garamond',Georgia,serif;font-size:clamp(1.8rem,3vw,2.5rem);font-weight:700;color:#122540;line-height:1.15;margin-bottom:14px}
+.doc-cta-h2 em{font-style:italic;color:#fff}
+.doc-cta-body{font-size:0.98rem;line-height:1.7;color:#122540;opacity:0.82;font-weight:400;max-width:520px}
+.doc-cta-btn{display:inline-flex;align-items:center;gap:11px;background:#122540;color:#fff;text-decoration:none;padding:16px 34px;font-size:0.82rem;font-weight:700;letter-spacing:0.12em;text-transform:uppercase;transition:background .2s,transform .15s;white-space:nowrap;flex-shrink:0}
+.doc-cta-btn:hover{background:#1A3557;transform:translateY(-1px)}
+.doc-cta-btn svg{width:18px;height:18px;fill:none;stroke:#4A9DC8;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+@media(max-width:768px){.doc-cta{padding:44px 24px}.doc-cta-inner{flex-direction:column;align-items:flex-start;gap:26px}}
 </style>
 </head>
 <body>
@@ -188,7 +201,6 @@ body.modal-open{overflow:hidden}
   <a href="tel:5613180880">Call Us &nbsp;(561) 318-0880</a>
   <div class="topbar-right">
     <a href="mailto:info@ulverfinancial.com">info@ulverfinancial.com</a>
-    <a href="#">Client Portal</a>
   </div>
 </div>
 
@@ -203,7 +215,7 @@ body.modal-open{overflow:hidden}
     <li><a href="#about">About Us</a></li>
     <li><a href="#testimonials">Our Clients</a></li>
     <li><a href="#contact">Contact</a></li>
-    <li><a href="#contact" class="nav-cta js-consult">Schedule a Consultation</a></li>
+    <li><a href="/upload.html" class="nav-cta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>Upload a Document</a></li>
   </ul>
 </nav>
 
@@ -352,6 +364,21 @@ body.modal-open{overflow:hidden}
 </div>
 
 <!-- FOOTER -->
+<!-- ── CLIENT DOCUMENT UPLOAD CTA ── -->
+<section class="doc-cta" id="upload">
+  <div class="doc-cta-inner">
+    <div class="doc-cta-text">
+      <div class="doc-cta-kicker">Existing Clients</div>
+      <h2 class="doc-cta-h2">Send us your documents, <em>securely</em></h2>
+      <p class="doc-cta-body">Upload tax forms, statements, and paperwork over an encrypted connection — straight to our team, with no account to create.</p>
+    </div>
+    <a href="/upload.html" class="doc-cta-btn" aria-label="Upload a document">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+      Upload a Document
+    </a>
+  </div>
+</section>
+
 <footer>
   <div class="footer-top">
     <div class="footer-brand">
@@ -377,7 +404,7 @@ body.modal-open{overflow:hidden}
       <ul>
         <li><a href="#">About Us</a></li>
         <li><a href="#">Our Process</a></li>
-        <li><a href="#">Client Portal</a></li>
+        <li><a href="/upload.html">Upload Documents</a></li>
         <li><a href="#">Contact</a></li>
         <li><a href="#">Privacy Policy</a></li>
       </ul>
