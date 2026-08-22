@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Secure Document Upload — Ulver Financial</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&display=swap" rel="stylesheet">
+<style>
+  /* ===== Brand tokens — change these to match ulverfinancial.com ===== */
+  :root{
+    --bg:#e8ebe6;
+    --surface:#ffffff;
+    --ink:#16221e;
+    --muted:#5c6a63;
+    --pine:#1f4a40;
+    --pine-deep:#143229;
+    --brass:#a97e3c;
+    --line:#dde2db;
+    --line-strong:#c7cfc4;
+    --ok:#1f6b4f;
+    --err:#9a3527;
+    --radius:14px;
+    --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  }
+  /* ================================================================== */
+
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1100px 500px at 50% -10%, #eef1ec 0%, var(--bg) 60%);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:32px 18px;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+
+  .card{
+    width:100%;
+    max-width:560px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:0 1px 2px rgba(20,50,41,.04), 0 18px 40px -24px rgba(20,50,41,.28);
+    overflow:hidden;
+  }
+
+  .card__head{
+    padding:34px 34px 26px;
+    border-bottom:1px solid var(--line);
+  }
+  .eyebrow{
+    font-size:12px;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--pine);
+    font-weight:600;
+    margin:0 0 14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--brass)}
+  h1{
+    font-family:var(--serif);
+    font-weight:500;
+    font-size:31px;
+    line-height:1.12;
+    letter-spacing:-.01em;
+    margin:0 0 10px;
+  }
+  .lede{margin:0;color:var(--muted);font-size:15px;max-width:44ch}
+
+  form{padding:26px 34px 30px}
+  .field{margin-bottom:18px}
+  label{display:block;font-size:13.5px;font-weight:600;margin-bottom:7px;color:var(--ink)}
+  label .opt{font-weight:400;color:var(--muted)}
+  input[type=text],input[type=email],textarea{
+    width:100%;
+    font-family:inherit;
+    font-size:15px;
+    color:var(--ink);
+    background:#fbfcfa;
+    border:1px solid var(--line-strong);
+    border-radius:9px;
+    padding:11px 13px;
+    transition:border-color .15s, box-shadow .15s, background .15s;
+  }
+  textarea{resize:vertical;min-height:74px}
+  input:focus,textarea:focus{
+    outline:none;
+    border-color:var(--pine);
+    background:#fff;
+    box-shadow:0 0 0 3px rgba(31,74,64,.14);
+  }
+
+  /* Signature element: the secure dropzone */
+  .drop{
+    position:relative;
+    border:1.5px dashed var(--line-strong);
+    border-radius:12px;
+    background:
+      linear-gradient(180deg,#fbfcfa,#f5f8f3);
+    padding:26px 20px;
+    text-align:center;
+    cursor:pointer;
+    transition:border-color .18s, background .18s, transform .18s;
+  }
+  .drop:hover{border-color:var(--pine)}
+  .drop.is-drag{
+    border-color:var(--pine);
+    border-style:solid;
+    background:#eef4ef;
+  }
+  .drop:focus-visible{outline:none;border-color:var(--pine);box-shadow:0 0 0 3px rgba(31,74,64,.16)}
+  .shield{
+    width:34px;height:34px;margin:0 auto 10px;
+    color:var(--pine);
+  }
+  .drop__title{font-weight:600;font-size:15px;margin:0 0 3px}
+  .drop__sub{font-size:13px;color:var(--muted);margin:0}
+  .drop__browse{color:var(--pine);text-decoration:underline;text-underline-offset:2px}
+  input[type=file]{display:none}
+
+  .files{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:8px}
+  .file{
+    display:flex;align-items:center;gap:12px;
+    border:1px solid var(--line);
+    border-radius:9px;
+    padding:10px 12px;
+    background:#fbfcfa;
+    animation:rise .22s ease both;
+  }
+  @keyframes rise{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .file__name{flex:1;min-width:0;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .file__size{font-size:12.5px;color:var(--muted);flex:none}
+  .file__x{
+    flex:none;border:0;background:transparent;color:var(--muted);
+    cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;border-radius:6px;
+  }
+  .file__x:hover{color:var(--err);background:#f6ecea}
+  .pill{flex:none;font-size:11.5px;font-weight:600;padding:3px 9px;border-radius:100px;letter-spacing:.02em}
+  .pill--queue{background:#eef1ec;color:var(--muted)}
+  .pill--up{background:#eaf1ee;color:var(--pine)}
+  .pill--ok{background:#e6f1ea;color:var(--ok)}
+  .pill--err{background:#f7e9e6;color:var(--err)}
+
+  .submit{
+    margin-top:22px;width:100%;
+    font-family:inherit;font-size:15px;font-weight:600;
+    color:#fff;background:var(--pine);
+    border:0;border-radius:10px;padding:13px 16px;cursor:pointer;
+    transition:background .16s, transform .06s;
+  }
+  .submit:hover{background:var(--pine-deep)}
+  .submit:active{transform:translateY(1px)}
+  .submit:disabled{background:#9fb3ac;cursor:not-allowed}
+
+  .note{
+    margin:16px 0 0;font-size:12.5px;color:var(--muted);
+    display:flex;gap:8px;align-items:flex-start;
+  }
+  .note svg{flex:none;margin-top:1px;color:var(--pine)}
+
+  .banner{
+    margin:0 0 4px;padding:12px 14px;border-radius:9px;font-size:14px;
+    display:none;
+  }
+  .banner--ok{display:block;background:#e6f1ea;color:var(--ok);border:1px solid #cfe4d7}
+  .banner--err{display:block;background:#f7e9e6;color:var(--err);border:1px solid #ecd2cc}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+  }
+  @media (max-width:480px){
+    .card__head{padding:26px 22px 22px}
+    form{padding:22px 22px 26px}
+    h1{font-size:27px}
+  }
+</style>
+</head>
+<body>
+  <main class="card">
+    <div class="card__head">
+      <p class="eyebrow"><span class="dot"></span>Ulver Financial</p>
+      <h1>Send us your documents, securely</h1>
+      <p class="lede">Your files travel over an encrypted connection straight to Ulver Financial. No third-party service, no account to create.</p>
+    </div>
+
+    <form id="uploadForm" novalidate>
+      <div id="banner" class="banner" role="status" aria-live="polite"></div>
+
+      <div class="field">
+        <label for="name">Full name</label>
+        <input type="text" id="name" name="name" autocomplete="name" required>
+      </div>
+
+      <div class="field">
+        <label for="email">Email</label>
+        <input type="email" id="email" name="email" autocomplete="email" required>
+      </div>
+
+      <div class="field">
+        <label for="message">Note <span class="opt">(optional)</span></label>
+        <textarea id="message" name="message" placeholder="Anything we should know about these documents?"></textarea>
+      </div>
+
+      <!-- Honeypot: hidden from people, catches bots. Do not remove. -->
+      <div style="position:absolute;left:-9999px" aria-hidden="true">
+        <label for="website">Website</label>
+        <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+      </div>
+
+      <div class="field">
+        <label>Documents</label>
+        <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files or drag them here">
+          <svg class="shield" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z"/>
+            <path d="M9.2 12.2l1.9 1.9 3.7-3.9"/>
+          </svg>
+          <p class="drop__title">Drag files here, or <span class="drop__browse">browse</span></p>
+          <p class="drop__sub">PDF, images, Word, Excel, CSV, ZIP · up to 25&nbsp;MB each</p>
+          <input type="file" id="fileInput" multiple
+                 accept=".pdf,.png,.jpg,.jpeg,.gif,.webp,.heic,.doc,.docx,.xls,.xlsx,.csv,.txt,.rtf,.ppt,.pptx,.zip">
+        </div>
+        <ul class="files" id="fileList"></ul>
+      </div>
+
+      <button type="submit" class="submit" id="submitBtn">Send securely</button>
+
+      <p class="note">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/>
+        </svg>
+        Only Ulver Financial can see what you send. Please don’t email sensitive documents — use this page instead.
+      </p>
+    </form>
+  </main>
+
+<script>
+  /* ============================================================
+     Paste your deployed Apps Script Web app URL here (ends in /exec)
+     ============================================================ */
+  const ENDPOINT = "https://script.google.com/macros/s/AKfycbwkEy2iooiVsDHR6kwwa2F8oWMhsXegRH3pQXiyT06Dmr2yuh0CXtpf0UsSVupfKbldzQ/exec";
+
+  const MAX_BYTES = 25 * 1024 * 1024;
+  const ALLOWED = ["pdf","png","jpg","jpeg","gif","webp","heic","doc","docx",
+                   "xls","xlsx","csv","txt","rtf","ppt","pptx","zip"];
+
+  const form      = document.getElementById("uploadForm");
+  const drop      = document.getElementById("drop");
+  const fileInput = document.getElementById("fileInput");
+  const fileList  = document.getElementById("fileList");
+  const submitBtn = document.getElementById("submitBtn");
+  const banner    = document.getElementById("banner");
+
+  let files = [];   // {file, id, status}
+
+  const fmtSize = b => b < 1024*1024
+    ? (b/1024).toFixed(0) + " KB"
+    : (b/1024/1024).toFixed(1) + " MB";
+  const ext = n => (n.split(".").pop() || "").toLowerCase();
+
+  function showBanner(kind, msg){
+    banner.className = "banner banner--" + kind;
+    banner.textContent = msg;
+  }
+  function clearBanner(){ banner.className = "banner"; banner.textContent = ""; }
+
+  function addFiles(list){
+    clearBanner();
+    for (const file of list){
+      if (!ALLOWED.includes(ext(file.name))){
+        showBanner("err", `“${file.name}” isn’t an accepted file type.`); continue;
+      }
+      if (file.size > MAX_BYTES){
+        showBanner("err", `“${file.name}” is larger than 25 MB.`); continue;
+      }
+      if (files.some(f => f.file.name === file.name && f.file.size === file.size)) continue;
+      files.push({ file, id: "f" + Math.random().toString(36).slice(2), status: "queue" });
+    }
+    render();
+  }
+
+  function render(){
+    fileList.innerHTML = "";
+    for (const f of files){
+      const li = document.createElement("li");
+      li.className = "file";
+      const pill =
+        f.status === "up"  ? '<span class="pill pill--up">Uploading…</span>' :
+        f.status === "ok"  ? '<span class="pill pill--ok">Sent</span>' :
+        f.status === "err" ? '<span class="pill pill--err">Failed</span>' :
+                             '<span class="pill pill--queue">Ready</span>';
+      const canRemove = f.status === "queue" || f.status === "err";
+      li.innerHTML =
+        `<span class="file__name">${f.file.name}</span>
+         <span class="file__size">${fmtSize(f.file.size)}</span>
+         ${pill}
+         ${canRemove ? `<button type="button" class="file__x" data-id="${f.id}" aria-label="Remove">×</button>` : ""}`;
+      fileList.appendChild(li);
+    }
+  }
+
+  fileList.addEventListener("click", e => {
+    const btn = e.target.closest(".file__x");
+    if (!btn) return;
+    files = files.filter(f => f.id !== btn.dataset.id);
+    render();
+  });
+
+  // Dropzone wiring
+  drop.addEventListener("click", () => fileInput.click());
+  drop.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " "){ e.preventDefault(); fileInput.click(); }
+  });
+  fileInput.addEventListener("change", () => { addFiles(fileInput.files); fileInput.value = ""; });
+  ["dragenter","dragover"].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.add("is-drag"); }));
+  ["dragleave","drop"].forEach(ev =>
+    drop.addEventListener(ev, e => { e.preventDefault(); drop.classList.remove("is-drag"); }));
+  drop.addEventListener("drop", e => { if (e.dataTransfer?.files) addFiles(e.dataTransfer.files); });
+
+  const toBase64 = file => new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload  = () => res(String(r.result).split(",")[1]);
+    r.onerror = () => rej(new Error("read failed"));
+    r.readAsDataURL(file);
+  });
+
+  async function uploadOne(entry, meta){
+    entry.status = "up"; render();
+    try {
+      const data = await toBase64(entry.file);
+      // No custom headers → browser sends a "simple" request → no CORS preflight.
+      const resp = await fetch(ENDPOINT, {
+        method: "POST",
+        body: JSON.stringify({
+          name: meta.name, email: meta.email, message: meta.message,
+          website: meta.website,
+          filename: entry.file.name, mimeType: entry.file.type, data
+        })
+      });
+      let ok = resp.ok;
+      try { const j = await resp.json(); ok = !!j.ok; if (!ok && j.error) entry.error = j.error; } catch(_){}
+      entry.status = ok ? "ok" : "err";
+    } catch (err) {
+      entry.status = "err";
+    }
+    render();
+  }
+
+  form.addEventListener("submit", async e => {
+    e.preventDefault();
+    clearBanner();
+
+    if (ENDPOINT.includes("PASTE_YOUR")){
+      showBanner("err", "This form isn’t connected yet — the upload address is still a placeholder.");
+      return;
+    }
+
+    const name    = document.getElementById("name").value.trim();
+    const email   = document.getElementById("email").value.trim();
+    const message = document.getElementById("message").value.trim();
+    const website = document.getElementById("website").value; // honeypot
+
+    if (!name || !email){ showBanner("err", "Please add your name and email."); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ showBanner("err", "That email doesn’t look right."); return; }
+
+    const pending = files.filter(f => f.status === "queue" || f.status === "err");
+    if (pending.length === 0){ showBanner("err", "Please choose at least one document to send."); return; }
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Sending…";
+
+    for (const entry of pending){
+      await uploadOne(entry, { name, email, message, website });
+    }
+
+    const sent   = files.filter(f => f.status === "ok").length;
+    const failed = files.filter(f => f.status === "err").length;
+
+    if (failed === 0){
+      showBanner("ok", `Thank you — ${sent} document${sent===1?"":"s"} received. We’ll be in touch.`);
+      submitBtn.textContent = "Sent";
+    } else {
+      showBanner("err", `${sent} sent, ${failed} didn’t go through. You can try the failed ones again.`);
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Retry failed";
+    }
+  });
+</script>
+</body>
+</html>
