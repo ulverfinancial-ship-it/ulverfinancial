@@ -390,8 +390,14 @@
     const failed = files.filter(f => f.status === "err").length;
 
     if (failed === 0){
-      showBanner("ok", `Thank you — ${sent} document${sent===1?"":"s"} received. We’ll be in touch.`);
-      submitBtn.textContent = "Sent";
+      showBanner("ok", `Thank you — ${sent} document${sent===1?"":"s"} received. You can add more below if you need to.`);
+      // Reset to a fresh state so more documents can be sent without reloading the page.
+      files = [];
+      render();
+      fileInput.value = "";
+      document.getElementById("message").value = "";
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Send securely";
     } else {
       showBanner("err", `${sent} sent, ${failed} didn’t go through. You can try the failed ones again.`);
       submitBtn.disabled = false;
