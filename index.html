@@ -28,6 +28,11 @@ nav{background:#1A3557;padding:0 60px;display:flex;align-items:center;justify-co
 .nav-links>li>a.nav-cta{background:#4A9DC8;color:#122540;padding:0 24px;font-weight:700;gap:8px}
 .nav-links>li>a.nav-cta svg{width:15px;height:15px;fill:none;stroke:#122540;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
 .nav-links>li>a.nav-cta:hover{background:#7BBFDC}
+.nav-toggle{display:none;flex-direction:column;justify-content:center;gap:5px;width:44px;height:44px;padding:0;background:none;border:none;cursor:pointer}
+.nav-toggle span{display:block;width:24px;height:2px;background:#fff;transition:transform .25s,opacity .25s}
+.nav-toggle.open span:nth-child(1){transform:translateY(7px) rotate(45deg)}
+.nav-toggle.open span:nth-child(2){opacity:0}
+.nav-toggle.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
 /* ── HERO ── */
 .hero{background:#122540;padding:90px 60px 80px;position:relative;overflow:hidden;min-height:520px;display:flex;align-items:center}
@@ -131,8 +136,12 @@ footer{background:#122540;padding:64px 60px 32px;border-top:3px solid #4A9DC8}
 @media(max-width:960px){
   .topbar,.hero-right{display:none}
   nav{padding:0 24px}
-  .nav-links{gap:0}
-  .nav-links>li>a{padding:0 12px;font-size:0.72rem}
+  .nav-toggle{display:flex}
+  .nav-links{position:absolute;top:100%;left:0;right:0;height:auto;flex-direction:column;align-items:stretch;gap:0;background:#1A3557;border-bottom:3px solid #4A9DC8;box-shadow:0 22px 44px rgba(0,0,0,0.32);padding:6px 0 10px;opacity:0;visibility:hidden;transform:translateY(-8px);transition:opacity .22s,transform .22s,visibility .22s}
+  .nav-links.open{opacity:1;visibility:visible;transform:translateY(0)}
+  .nav-links>li{height:auto;width:100%}
+  .nav-links>li>a{height:auto;width:100%;padding:15px 24px;font-size:0.82rem}
+  .nav-links>li>a.nav-cta{justify-content:center;margin:8px 24px 2px;padding:15px 24px}
   .hero{padding:60px 24px 60px}
   .services-bar-inner{grid-template-columns:1fr 1fr}
   .service-tab{border-bottom:1px solid #e5e9f0}
@@ -210,13 +219,16 @@ body.modal-open{overflow:hidden}
     <span class="nav-logo-top">Ulver Financial</span>
     <span class="nav-logo-sub">Accountants &amp; Advisors</span>
   </a>
-  <ul class="nav-links">
+  <ul class="nav-links" id="navLinks">
     <li><a href="#services">Services</a></li>
     <li><a href="#about">About Us</a></li>
     <li><a href="#testimonials">Our Clients</a></li>
     <li><a href="#contact">Contact</a></li>
     <li><a href="/upload.html" class="nav-cta"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="10" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>Upload a Document</a></li>
   </ul>
+  <button class="nav-toggle" id="navToggle" aria-label="Menu" aria-expanded="false" aria-controls="navLinks">
+    <span></span><span></span><span></span>
+  </button>
 </nav>
 
 <!-- HERO -->
@@ -510,6 +522,24 @@ body.modal-open{overflow:hidden}
      thank-you message but does not send anything.
      ───────────────────────────────────────────────────────────── */
   var FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbyu1aKyiQH-aMdIZA7BI5wxxRbI3N4WQoSntsc-j0-9yLHBjMFhusnBPYM6JvhVr2E/exec";
+
+  /* ── MOBILE NAV TOGGLE ── */
+  var navToggle = document.getElementById('navToggle');
+  var navLinks = document.getElementById('navLinks');
+  if(navToggle && navLinks){
+    navToggle.addEventListener('click', function(){
+      var open = navLinks.classList.toggle('open');
+      navToggle.classList.toggle('open', open);
+      navToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+    });
+    navLinks.querySelectorAll('a').forEach(function(a){
+      a.addEventListener('click', function(){
+        navLinks.classList.remove('open');
+        navToggle.classList.remove('open');
+        navToggle.setAttribute('aria-expanded','false');
+      });
+    });
+  }
 
   var modal = document.getElementById('consultModal');
   var form = document.getElementById('consultForm');
